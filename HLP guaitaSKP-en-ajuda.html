@@ -1,0 +1,388 @@
+<!--
+  Guaita Apps - Suite d'eines autònomes per a arquitectura, BIM i documentació.
+  Copyright (c) 2026 Jordi Subirós
+  GNU Affero General Public License v3.0
+  See LICENSE file for details
+  SPDX-License-Identifier: AGPL-3.0-only
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>guaitaSKP 0.14 — User manual</title>
+<style>
+:root{
+  --bg:#0a0a0a; --bg-2:#111214; --bg-3:#181a1d; --line:#26292e; --line-2:#33373d;
+  --fg:#e9ebee; --dim:#9aa1ab; --dim-2:#69707b;
+  --accent:#C6FF00; --accent-2:#FF2ECC; --accent-3:#00E5FF; --accent-4:#FFE500;
+  --warn:#FFB020; --stop:#FF5E5E;
+  --sans:'Space Grotesk','Segoe UI',system-ui,-apple-system,Arial,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Consolas,monospace;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth; scroll-padding-top:24px;}
+body{
+  margin:0; background:var(--bg); color:var(--fg); font-family:var(--sans); font-size:15.5px; line-height:1.65;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:44px 44px; background-position:-1px -1px;
+  background-attachment:fixed;
+}
+body::before{content:""; position:fixed; inset:0; background:radial-gradient(ellipse at 30% 0%,rgba(10,10,10,.55),var(--bg) 75%); pointer-events:none; z-index:0;}
+a{color:var(--accent); text-decoration:none;} a:hover{text-decoration:underline;}
+code{font-family:var(--mono); font-size:.86em; background:var(--bg-3); border:1px solid var(--line); border-radius:4px; padding:1px 6px; color:var(--accent-3);}
+kbd{font-family:var(--mono); font-size:.8em; background:var(--bg-3); border:1px solid var(--line-2); border-bottom-width:2px; border-radius:5px; padding:1px 7px; color:var(--fg);}
+
+header.hero{position:relative; z-index:1; padding:56px 6vw 44px; border-bottom:1px solid var(--line); background:linear-gradient(180deg,rgba(24,26,29,.75),rgba(10,10,10,0));}
+.brand{display:flex; align-items:center; gap:10px; font-family:var(--mono); font-weight:600; letter-spacing:.06em; font-size:15px;}
+.brand small{color:var(--accent); font-weight:700; text-transform:lowercase; letter-spacing:.02em; margin-left:-4px;}
+.cells{display:inline-grid; grid-template-columns:repeat(2,1fr);}
+.brand .cells{gap:3px;} .brand .cells span{width:13px; height:13px; display:block;}
+.cells span:nth-child(1){background:var(--accent);} .cells span:nth-child(2){background:var(--accent-2);}
+.cells span:nth-child(3){background:var(--accent-3);} .cells span:nth-child(4){background:var(--accent-4);}
+.tag{display:inline-block; margin:26px 0 10px; font-family:var(--mono); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); border:1px solid var(--accent); border-radius:99px; padding:3px 12px;}
+header.hero h1{margin:0; font-size:clamp(34px,5.5vw,58px); line-height:1.05; letter-spacing:-.02em;}
+header.hero h1 em{font-style:normal; color:var(--accent);}
+.lead{max-width:760px; margin:18px 0 0; color:var(--dim); font-size:17.5px;}
+.meta-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:22px;}
+.chip{font-family:var(--mono); font-size:11.5px; color:var(--dim); border:1px solid var(--line-2); border-radius:6px; padding:3px 10px; background:var(--bg-2);}
+
+.layout{position:relative; z-index:1; display:grid; grid-template-columns:230px minmax(0,1fr); gap:48px; max-width:1240px; margin:0 auto; padding:40px 6vw 20px;}
+nav.toc{position:sticky; top:24px; align-self:start; font-size:13.5px; border-left:1px solid var(--line); padding-left:16px;}
+nav.toc .toc-t{font-family:var(--mono); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--dim-2); margin-bottom:10px;}
+nav.toc a{display:block; padding:5px 0; color:var(--dim); border-left:2px solid transparent; margin-left:-18px; padding-left:16px;}
+nav.toc a:hover{color:var(--fg); text-decoration:none;}
+nav.toc a.active{color:var(--accent); border-left-color:var(--accent);}
+
+section{margin-bottom:64px;}
+section h2{margin:0 0 4px; font-family:var(--mono); font-weight:500; font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent);}
+section .st{margin:0 0 18px; font-size:clamp(24px,3.2vw,34px); font-weight:600; letter-spacing:-.015em; line-height:1.15;}
+section h3{margin:30px 0 8px; font-size:18px; font-weight:600;}
+p{margin:0 0 14px;} ul{padding-left:22px; margin:0 0 14px;} li{margin:4px 0;}
+
+.note{border:1px solid var(--line-2); border-left:3px solid var(--accent-3); background:var(--bg-2); border-radius:8px; padding:12px 16px; margin:18px 0; font-size:14.5px; color:#cfd4da;}
+.note b:first-child{color:var(--accent-3);}
+.note.warn{border-left-color:var(--warn);} .note.warn b:first-child{color:var(--warn);}
+.note.stop{border-left-color:var(--stop);} .note.stop b:first-child{color:var(--stop);}
+
+ol.steps{list-style:none; counter-reset:s; padding:0; margin:18px 0;}
+ol.steps li{counter-increment:s; position:relative; padding:0 0 0 46px; margin:0 0 14px; min-height:32px;}
+ol.steps li::before{content:counter(s); position:absolute; left:0; top:0; width:32px; height:32px; border-radius:8px; background:var(--accent); color:#0a0a0a; font-family:var(--mono); font-weight:700; display:grid; place-items:center;}
+
+.cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:14px; margin:18px 0;}
+.card{background:var(--bg-2); border:1px solid var(--line); border-radius:10px; padding:16px 18px;}
+.card svg{width:26px; height:26px; stroke:var(--accent); fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; margin-bottom:8px;}
+.card h4{margin:0 0 4px; font-size:15.5px;} .card p{margin:0; font-size:13.8px; color:var(--dim);}
+
+table.tbl{width:100%; border-collapse:collapse; margin:16px 0; font-size:14.5px;}
+table.tbl th{text-align:left; font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--dim-2); border-bottom:1px solid var(--line-2); padding:8px 10px;}
+table.tbl td{padding:9px 10px; border-bottom:1px solid var(--line); vertical-align:top;}
+table.tbl tr:hover td{background:rgba(255,255,255,.02);}
+
+.map{display:grid; grid-template-columns:200px 1fr; grid-template-rows:auto auto 1fr auto; gap:6px; margin:20px 0; font-family:var(--mono); font-size:12px; max-width:760px;}
+.map > div{border:1px dashed var(--line-2); border-radius:8px; padding:10px 12px; background:var(--bg-2); color:var(--dim);}
+.map b{display:block; color:var(--accent); font-weight:600; margin-bottom:2px;}
+.map .m-top{grid-column:1/-1;} .map .m-tool{grid-column:1/-1;}
+.map .m-left{grid-row:3; min-height:130px;} .map .m-view{grid-row:3; min-height:130px; background:linear-gradient(#1a2a3a,#22282f);}
+.map .m-foot{grid-column:1/-1;}
+
+details{border:1px solid var(--line); border-radius:8px; background:var(--bg-2); margin:10px 0; padding:0 16px;}
+details[open]{border-color:var(--line-2);}
+summary{cursor:pointer; padding:12px 0; font-weight:600; list-style:none;}
+summary::-webkit-details-marker{display:none;}
+summary::before{content:"+"; display:inline-block; width:22px; color:var(--accent); font-family:var(--mono);}
+details[open] summary::before{content:"–";}
+details p{color:#cfd4da; font-size:14.5px;}
+
+footer{position:relative; z-index:1; border-top:1px solid var(--line); margin-top:30px; padding:34px 6vw 46px; background:var(--bg-2); color:var(--dim); font-size:12.8px;}
+footer .fb{display:flex; align-items:center; gap:8px; font-family:var(--mono); font-weight:600; color:var(--fg); letter-spacing:.06em; margin-bottom:12px;}
+.fb .cells{gap:2px;} .fb .cells span{width:6px; height:6px; display:block;}
+footer .sig{font-family:var(--mono); color:var(--fg); margin-bottom:10px;}
+footer .disc{max-width:900px; line-height:1.6;}
+
+@media (max-width:860px){ .layout{grid-template-columns:1fr; gap:10px;} nav.toc{position:static; border-left:0; padding-left:0; display:flex; flex-wrap:wrap; gap:4px 14px;} nav.toc .toc-t{width:100%;} nav.toc a{margin-left:0; padding-left:0; border-left:0;} .map{grid-template-columns:1fr;} .map .m-left,.map .m-view{grid-row:auto;} }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="brand"><span class="cells"><span></span><span></span><span></span><span></span></span>GUAITA<small>skp</small></div>
+  <span class="tag">User manual</span>
+  <h1>guaita<em>SKP</em></h1>
+  <p class="lead">A 3D viewer for SketchUp (<code>.skp</code>) files in your browser: open models, navigate them, select their elements, switch layers on and off, cut them with a section box and see them with SketchUp's sky and ground look.</p>
+  <div class="meta-row">
+    <span class="chip">Version 0.14</span>
+    <span class="chip">.skp only</span>
+    <span class="chip">Engine: OpenSKP (MIT) + Three.js</span>
+    <span class="chip">AGPL-3.0-only licence</span>
+  </div>
+</header>
+
+<div class="layout">
+<nav class="toc" id="toc">
+  <div class="toc-t">Contents</div>
+  <a href="#intro">What it is</a>
+  <a href="#requirements">Requirements and privacy</a>
+  <a href="#opening">Opening models</a>
+  <a href="#interface">The interface</a>
+  <a href="#navigation">Navigating the view</a>
+  <a href="#models">Models panel</a>
+  <a href="#layers">Layers</a>
+  <a href="#selection">Select, isolate and hide</a>
+  <a href="#section">Section box</a>
+  <a href="#appearance">Views and appearance</a>
+  <a href="#shortcuts">Keyboard shortcuts</a>
+  <a href="#limits">Known limitations</a>
+  <a href="#faq">FAQ</a>
+</nav>
+
+<main>
+
+<section id="intro">
+  <h2>01 · Introduction</h2>
+  <div class="st">What guaitaSKP is</div>
+  <p>guaitaSKP reads <code>.skp</code> files without needing SketchUp. It rebuilds the geometry, the material colours and the real <strong>layers</strong> (called <em>tags</em> in recent SketchUp versions) of the file, and shows them in a 3D viewer designed to look like SketchUp's: sky in the background, ground at elevation&nbsp;0 and the red/green/blue axes triad.</p>
+  <div class="note"><b>Interface language.</b> The viewer comes in two builds with the same code: <code>guaitaSKP 0.14.html</code> (Catalan interface) and <code>guaitaSKP-en 0.14.html</code> (English interface). This manual quotes menu and button names as they appear in the Catalan build, in <em>italics</em>, followed by their English equivalent in brackets, which is what the English build shows (the wording may differ slightly); the full list is in <a href="#interface">The interface</a>.</div>
+  <div class="cards">
+    <div class="card"><svg viewBox="0 0 24 24"><path d="M4 7l8-4 8 4-8 4-8-4zM4 7v10l8 4 8-4V7M12 11v10"/></svg><h4>Real elements</h4><p>Each SketchUp group or component can be selected as a whole, with all its materials.</p></div>
+    <div class="card"><svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4-9-4zM3 12l9 4 9-4M3 17l9 4 9-4"/></svg><h4>The file's layers</h4><p>A list with colour and element count; switch them on and off with one click.</p></div>
+    <div class="card"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM4 12h16M12 4v16"/></svg><h4>Section box</h4><p>Cut the model along X, Y and height, with rotation and a dark poché cap at the cut.</p></div>
+    <div class="card"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M6 6l12 12"/></svg><h4>SketchUp axes</h4><p>X red, Y green, Z (vertical) blue, at each file's internal origin.</p></div>
+  </div>
+</section>
+
+<section id="requirements">
+  <h2>02 · Before you start</h2>
+  <div class="st">Requirements and privacy</div>
+  <ul>
+    <li><strong>A modern browser</strong> with WebGL (recent Chrome, Edge, Firefox or Safari).</li>
+    <li><strong>An Internet connection when the viewer loads:</strong> Three.js and the fonts are downloaded from a CDN. The engine that reads the <code>.skp</code> files (OpenSKP) is embedded in the file itself.</li>
+    <li><strong>Your files never leave your computer.</strong> <code>.skp</code> files are processed locally in the browser; they are not uploaded anywhere.</li>
+  </ul>
+  <div class="note"><b>Good to know.</b> Unlike other tools in the Guaita suite, this viewer does not work completely offline, because it depends on the Three.js CDN.</div>
+</section>
+
+<section id="opening">
+  <h2>03 · Loading</h2>
+  <div class="st">Opening models</div>
+  <p>You can open one or several files at once. Only files with the <code>.skp</code> extension are accepted: others are ignored and, if none is <code>.skp</code>, a warning appears.</p>
+  <ol class="steps">
+    <li><strong>Choose how to open them:</strong> menu <em>Fitxer → Obre fitxer(s) .skp…</em> (File → Open .skp file(s)…), the <kbd>O</kbd> key, the <em>+ Obrir .skp…</em> (+ Open .skp…) button in the Models panel, a click on the empty start screen, or simply <strong>drag them</strong> onto the viewer.</li>
+    <li>While each file is analysed, a loading indicator shows its name.</li>
+    <li>When finished, the camera frames everything loaded and the model appears in the <em>Models</em> panel.</li>
+  </ol>
+  <p>If a file cannot be read, a message explains why and the rest of the files in the same batch keep loading.</p>
+  <div class="note warn"><b>Model position.</b> Each model is <strong>centred on its own</strong>: horizontally around the origin, and with its base exactly at elevation&nbsp;0 (on the ground). If you open several, they overlap at the centre; the relative position they may have had to each other is not preserved.</div>
+  <p>To remove models: the ✕ on each card (asks for confirmation) or <em>Fitxer → Buida el visor</em> (File → Clear the viewer).</p>
+</section>
+
+<section id="interface">
+  <h2>04 · Orientation</h2>
+  <div class="st">The interface</div>
+  <div class="map">
+    <div class="m-top"><b>Menu bar</b>Fitxer · Visualitza · Selecció · Eines · Ajuda</div>
+    <div class="m-tool"><b>Toolbar (right)</b>Fit · Wireframe · Transparency · Isolate · Hide · Show all</div>
+    <div class="m-left"><b>Models panel</b>A card per file, with opacity, colour, section and layer list</div>
+    <div class="m-view"><b>3D viewer</b>Sky, ground and models. Views icon at top right; floating section panel.</div>
+  </div>
+  <p>Menus open with a click; with one menu open, hovering over another opens it directly. A click outside closes them. Options that need a loaded model are greyed out until you have one.</p>
+  <table class="tbl">
+    <thead><tr><th>Menu (as on screen)</th><th>What you will find</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Fitxer</strong> (File)</td><td><em>Obre fitxer(s) .skp…</em> (Open .skp file(s)…) · <em>Buida el visor</em> (Clear the viewer)</td></tr>
+      <tr><td><strong>Visualitza</strong> (View)</td><td><em>Enquadra</em> (Fit) · <em>Càmera</em> (Camera: <em>Perspectiva</em>, <em>Ortogràfica</em> orthographic, <em>Planta superior</em> top plan, <em>Axonometria</em>, <em>Alçat sud / nord / est / oest</em> south / north / east / west elevation) · <em>Color de fons</em> (Background colour: <em>Cel (SketchUp)</em> sky, <em>Blanc</em> white, <em>Gris fosc</em> dark grey, <em>Negre</em> black) · <em>Filferro</em> (Wireframe) · <em>Transparència</em> (Transparency) · <em>Terra</em> (Ground) · <em>Eixos (RGB)</em> (Axes)</td></tr>
+      <tr><td><strong>Selecció</strong> (Selection)</td><td><em>Aïlla la selecció</em> (Isolate) · <em>Amaga la selecció</em> (Hide) · <em>Mostra-ho tot</em> (Show all) · <em>Deselecciona</em> (Deselect)</td></tr>
+      <tr><td><strong>Eines</strong> (Tools)</td><td><em>Caixa de secció</em> (Section box)</td></tr>
+      <tr><td><strong>Ajuda</strong> (Help)</td><td><em>Sobre guaitaSKP</em> (About guaitaSKP)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="navigation">
+  <h2>05 · Camera</h2>
+  <div class="st">Navigating the view</div>
+  <table class="tbl">
+    <thead><tr><th>Action</th><th>How</th></tr></thead>
+    <tbody>
+      <tr><td>Orbit around the model</td><td>Drag with the left button</td></tr>
+      <tr><td>Zoom in / out</td><td>Mouse wheel (or two-finger pinch on a touch screen)</td></tr>
+      <tr><td>Pan the view</td><td>Drag with the right button (or two fingers on a touch screen)</td></tr>
+      <tr><td>Fit everything or the selection</td><td><kbd>F</kbd>, the <em>Enquadra</em> (Fit) button or <em>Visualitza → Enquadra</em></td></tr>
+    </tbody>
+  </table>
+  <p>Pressing <kbd>F</kbd> with elements selected moves the camera in on the selection; with no selection, it frames all visible models.</p>
+</section>
+
+<section id="models">
+  <h2>06 · Left panel</h2>
+  <div class="st">Models panel</div>
+  <p>Each loaded file has a card with these controls:</p>
+  <table class="tbl">
+    <thead><tr><th>Control</th><th>Function</th></tr></thead>
+    <tbody>
+      <tr><td><strong>▾ / ▸</strong></td><td>Collapse or expand the card.</td></tr>
+      <tr><td><strong>Eye</strong></td><td>Show or hide the whole model.</td></tr>
+      <tr><td><strong>Colour swatch</strong></td><td>Each click changes the colour assigned to the model (cyclic palette). That colour is only visible with <em>Color pla</em> (Flat colour).</td></tr>
+      <tr><td><strong>Name</strong></td><td>A click makes it the <em>active model</em> (the one used by the section box).</td></tr>
+      <tr><td><strong>✕</strong></td><td>Remove the model from the viewer (with confirmation).</td></tr>
+      <tr><td><strong>Opacitat</strong> (Opacity)</td><td>Slider from 10&nbsp;% to 100&nbsp;% for the whole model.</td></tr>
+      <tr><td><strong>Color pla</strong> (Flat colour)</td><td>Paints the whole model in its palette colour; press it again to get the original materials back.</td></tr>
+      <tr><td><strong>Secciona…</strong> (Section…)</td><td>Opens the section box for this model.</td></tr>
+      <tr><td><strong>Aïlla</strong> (Isolate)</td><td>Leaves only this model visible (it hides the others with their eye; to bring them back, press each one's eye).</td></tr>
+    </tbody>
+  </table>
+  <p>Under the name there is a line with the file's SketchUp version, the number of layers and elements, and the approximate dimensions in metres.</p>
+</section>
+
+<section id="layers">
+  <h2>07 · Tags</h2>
+  <div class="st">Layers</div>
+  <p>Each card has a <strong>Capes</strong> (Layers) drop-down with all the file's layers that contain something. Each row shows:</p>
+  <ul>
+    <li>a <strong>checkbox</strong> to show or hide the layer;</li>
+    <li>the layer's <strong>colour</strong>, as defined in the file;</li>
+    <li>the layer's <strong>name</strong>;</li>
+    <li>the <strong>number of elements</strong> (groups or components) in it.</li>
+  </ul>
+  <p>Unchecking a layer hides all its elements instantly, without reading the file again.</p>
+  <div class="note"><b>Layers hidden in the file.</b> Older files (SketchUp before 2021) store which layers were switched off, and guaitaSKP respects that on opening. Modern files do not expose this information, so all their layers appear visible.</div>
+  <div class="note warn"><b>Show all and layers.</b> <em>Mostra-ho tot</em> (Show all, <kbd>X</kbd>) makes every hidden element visible again, including those of unchecked layers, but in this version the checkboxes in the list are not re-ticked automatically. If that happens, tick them by hand.</div>
+</section>
+
+<section id="selection">
+  <h2>08 · Elements</h2>
+  <div class="st">Select, isolate and hide</div>
+  <h3>Selecting</h3>
+  <ul>
+    <li><strong>Click</strong> on an element: the <em>whole group or component</em> is selected (not a single face) and highlighted in lime green.</li>
+    <li><kbd>Shift</kbd> + click: adds or removes elements from the selection.</li>
+    <li>Click on empty space or <kbd>Esc</kbd>: deselects.</li>
+  </ul>
+  <p>A click only counts if you have not dragged, so orbiting the view never changes the selection.</p>
+  <h3>Isolating, hiding and showing again</h3>
+  <table class="tbl">
+    <thead><tr><th>Action</th><th>Key</th><th>Where</th></tr></thead>
+    <tbody>
+      <tr><td>Isolate the selection (hides everything else)</td><td><kbd>I</kbd></td><td><em>Selecció → Aïlla la selecció</em> · eye button</td></tr>
+      <tr><td>Hide the selection</td><td><kbd>H</kbd></td><td><em>Selecció → Amaga la selecció</em> · crossed-out eye button</td></tr>
+      <tr><td>Show all</td><td><kbd>X</kbd></td><td><em>Selecció → Mostra-ho tot</em> · eye-with-rays button</td></tr>
+      <tr><td>Deselect</td><td><kbd>Esc</kbd></td><td><em>Selecció → Deselecciona</em></td></tr>
+    </tbody>
+  </table>
+  <div class="note"><b>No properties sheet.</b> In this version, selecting an element only highlights it: its name, layer and definition are not shown.</div>
+</section>
+
+<section id="section">
+  <h2>09 · Cuts</h2>
+  <div class="st">Section box</div>
+  <p>Cuts the active model with an adjustable box, and caps the interior faces the cut leaves exposed with a <strong>dark poché</strong>, as in an architectural section.</p>
+  <ol class="steps">
+    <li>Open it from <em>Eines → Caixa de secció</em> (Tools → Section box), with the <strong>⛶</strong> icon in the views box, or with <em>Secciona…</em> on a model's card.</li>
+    <li>Pick the model in the drop-down at the top (if you have more than one) and tick <strong>Activa</strong> (Enable).</li>
+    <li>Move the sliders to cut.</li>
+  </ol>
+  <table class="tbl">
+    <thead><tr><th>Slider</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Gir</strong> (Rotation)</td><td>Rotates the box from 0° to 360° around the vertical axis.</td></tr>
+      <tr><td><strong>X</strong></td><td>Two sliders: minimum and maximum limit in that direction.</td></tr>
+      <tr><td><strong>Y (planta)</strong> (Y, plan)</td><td>Two sliders: limits in the perpendicular direction, seen in plan.</td></tr>
+      <tr><td><strong>Alçada</strong> (Height)</td><td>Two sliders: cuts from below and from above.</td></tr>
+      <tr><td><strong>↺</strong></td><td>Resets all values.</td></tr>
+    </tbody>
+  </table>
+  <p>Values are percentages of the model's own bounding box. With a section active, the plan and elevation views (<em>Visualitza → Càmera</em>) frame the section box instead of the whole model.</p>
+</section>
+
+<section id="appearance">
+  <h2>10 · Presentation</h2>
+  <div class="st">Views and appearance</div>
+  <h3>Views box</h3>
+  <p>The round icon at the top right of the viewer opens a small box with:</p>
+  <ul>
+    <li><strong>Views:</strong> <em>PL</em> plan, <em>N</em>, <em>S</em>, <em>E</em>, <em>O</em> elevations (north, south, east, west; <em>O</em> stands for <em>oest</em>, west), and <strong>⌂</strong> axonometric. In the English build these read <em>TOP</em>, <em>N</em>, <em>S</em>, <em>E</em>, <em>W</em>.</li>
+    <li><strong>⤢</strong> fit · <strong>◳</strong> switch between perspective and orthographic · <strong>⛶</strong> section box.</li>
+    <li><strong>Fons</strong> (Background; labelled <em>BG</em> in the English build): sky, white, dark grey and black.</li>
+  </ul>
+  <p>The same options are in <em>Visualitza</em>. The chosen background is remembered by the browser for next time; by default it is SketchUp's sky.</p>
+  <h3>Wireframe and transparency</h3>
+  <p><em>Visualitza → Filferro</em> (Wireframe) shows the triangle edges; <em>Visualitza → Transparència</em> (Transparency) makes all models translucent. They can be combined.</p>
+  <h3>Ground and axes</h3>
+  <ul>
+    <li><strong>Ground:</strong> a solid plane at elevation&nbsp;0 with a soft grid. On by default; <em>Visualitza → Terra</em> hides it. Models' bases rest on it.</li>
+    <li><strong>Axes (RGB):</strong> a SketchUp-style triad — <strong style="color:#DB3B3B">X red</strong>, <strong style="color:#3AA23A">Y green</strong>, <strong style="color:#3B6FDB">Z (vertical) blue</strong>. Each model carries its own, placed at the <em>file's internal origin</em> (where the author had the origin in SketchUp), and it moves with the model. On by default; <em>Visualitza → Eixos (RGB)</em> hides them.</li>
+  </ul>
+</section>
+
+<section id="shortcuts">
+  <h2>11 · Quick</h2>
+  <div class="st">Keyboard shortcuts</div>
+  <table class="tbl">
+    <thead><tr><th>Key</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr><td><kbd>O</kbd></td><td>Open .skp file(s)</td></tr>
+      <tr><td><kbd>F</kbd></td><td>Fit everything or the selection</td></tr>
+      <tr><td><kbd>I</kbd></td><td>Isolate the selection</td></tr>
+      <tr><td><kbd>H</kbd></td><td>Hide the selection</td></tr>
+      <tr><td><kbd>X</kbd></td><td>Show all</td></tr>
+      <tr><td><kbd>Esc</kbd></td><td>Deselect</td></tr>
+      <tr><td><kbd>Shift</kbd> + click</td><td>Add or remove an element from the selection</td></tr>
+    </tbody>
+  </table>
+  <div class="note warn"><b>Mind W and T.</b> The <em>Visualitza</em> menu shows <kbd>W</kbd> (wireframe) and <kbd>T</kbd> (transparency) as shortcuts, but in version 0.14 they do not respond to the keyboard yet: use the menu.</div>
+  <p>Shortcuts do not work while the focus is on a slider or a drop-down; click on the viewer first.</p>
+</section>
+
+<section id="limits">
+  <h2>12 · Being upfront</h2>
+  <div class="st">Known limitations</div>
+  <ul>
+    <li><strong><code>.skp</code> only.</strong> It does not open any other format.</li>
+    <li><strong>No textures.</strong> Each face is painted with the flat colour of its material; texture images are not shown.</li>
+    <li><strong>Reverse-engineered reading.</strong> The .skp format is not public, so OpenSKP rebuilds it with no guarantee of full coverage. Tested here with files from SketchUp 2017 to 2020; files from 2021 onwards are supported by OpenSKP but have not been tested in this viewer. Some older file with an unusual combination may fail with an error message.</li>
+    <li><strong>Several models:</strong> their relative position is not respected (see <a href="#opening">Opening models</a>).</li>
+    <li><strong>Inactive buttons:</strong> on the toolbar, <em>Filferro</em> and <em>Transparència</em> reflect the state but are switched on from the menu; the <em>Mesura</em> (Measure) button is reserved and does nothing. The two buttons in the «Estil» (Style) row of the views box do nothing either: use the menu.</li>
+    <li><strong>No properties sheet</strong> for selected elements.</li>
+    <li><strong>Very complex models</strong> may take a while to load: each group or component becomes its own meshes.</li>
+  </ul>
+</section>
+
+<section id="faq">
+  <h2>13 · Questions</h2>
+  <div class="st">FAQ</div>
+  <details><summary>Are my files uploaded to a server?</summary><p>No. The .skp file is read and processed inside your browser. Only Three.js and the viewer's fonts are downloaded from the network.</p></details>
+  <details><summary>Why does the model sit on the ground even if it was higher or lower in SketchUp?</summary><p>On loading, guaitaSKP brings the lowest part of the geometry to elevation&nbsp;0 and centres it horizontally. The axes, however, are drawn at the origin the file originally had, so they may end up above or below the ground.</p></details>
+  <details><summary>Why is green the Y axis and blue the vertical?</summary><p>Because that is SketchUp's convention: red X, green Y and blue Z (the vertical axis). Internally the viewer works with Y as the vertical axis, but the triad colours follow SketchUp's.</p></details>
+  <details><summary>I unchecked a layer and its elements came back when I pressed “Mostra-ho tot” (Show all). Is that normal?</summary><p>Yes: <em>Mostra-ho tot</em> re-enables all hidden elements, including those of unchecked layers. The checkbox in the list is not re-ticked by itself in this version; tick it by hand so it matches what you see.</p></details>
+  <details><summary>I cannot see the ground.</summary><p>Check that <em>Visualitza → Terra</em> is ticked: it is on by default, but if you have unticked it you will only see the sky.</p></details>
+  <details><summary>Can I measure distances?</summary><p>Not in this version. The <em>Mesura</em> (Measure) button on the toolbar is a placeholder for a future feature.</p></details>
+</section>
+
+</main>
+</div>
+
+<footer>
+  <div class="fb"><span class="cells"><span></span><span></span><span></span><span></span></span>GUAITA · skp</div>
+  <div class="sig">SBS BIM Consulting 2026</div>
+  <div class="disc">Guaita Apps es distribueix «tal com és», sense cap garantia. Les eines estan pensades desde la recerca i com a suport tècnic i educatiu; la verificació dels resultats i la responsabilitat derivada del seu ús recauen únicament sobre l'usuari final.</div>
+  <div class="disc" lang="en" style="margin-top:8px; color:var(--dim-2);"><em>English translation, for convenience:</em> Guaita Apps is distributed “as is”, without any warranty. The tools are designed from research and as technical and educational support; verification of the results and any liability arising from their use rest solely with the end user.</div>
+</footer>
+
+<script>
+(function () {
+  var links = [].slice.call(document.querySelectorAll('#toc a'));
+  var map = {};
+  links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
+  var secs = [].slice.call(document.querySelectorAll('main section'));
+  function setActive(id) { links.forEach(function (a) { a.classList.toggle('active', a === map[id]); }); }
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { if (e.isIntersecting) setActive(e.target.id); });
+    }, { rootMargin: '-15% 0px -70% 0px' });
+    secs.forEach(function (s) { io.observe(s); });
+  }
+  setActive(secs[0].id);
+})();
+</script>
+</body>
+</html>
